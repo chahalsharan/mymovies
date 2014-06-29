@@ -1,0 +1,191 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+ <HEAD>
+  <TITLE> New Document </TITLE>
+  <META NAME="Generator" CONTENT="EditPlus">
+  <META NAME="Author" CONTENT="">
+  <META NAME="Keywords" CONTENT="">
+  <META NAME="Description" CONTENT="">
+  <title>Let me watch these movies</title>
+  <script type="text/javascript" src="json2.js"></script>
+  <script type="text/javascript" src="jquery-1.11.1.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <link rel="stylesheet" href="http://getbootstrap.com/examples/carousel/carousel.css">
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.js"></script>
+  <script type="text/javascript" src="jquery.store.js"></script>
+ </HEAD>
+<?php
+	// start database connection
+	$db = Database('localhost', 'root', '', 'let_me_watch_this');
+	// query database
+	$q = "SELECT * FROM movies ORDER BY name";
+	$r = $db->query($q);
+	
+	  
+		echo "{$a['author']} wrote {$a['title']}\n";
+	  }
+	}
+	 
+	// fetch array of articles with less code
+	$q = "SELECT * FROM articles ORDER BY id DESC";
+	$a = $db->fetch_all_array($q);
+	if (!empty($a)) {
+	  foreach ($a as $k => $v) {
+		echo "{$v['author']} wrote {$v['title']}\n";
+	  }
+	}
+?>
+<body>
+	
+	<!-- Carousel
+    ================================================== -->
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+	  <?php
+		// if we have a result loop over the result
+		$first = "active";
+		if ($db->num_rows($r) > 0) {
+			while ($movie = $db->fetch_array_assoc($r)) {
+		?>
+        <div class="item <?php echo $first ?>">
+          <img data-src="<?php echo $movie['thumbnail'] ?>" alt="First slide">
+          <div class="container">
+            <div class="carousel-caption">
+              <h1><?php echo $movie['name'] ?></h1>
+              <p><?php echo $movie['year'] ?></p>
+              <p><a class="btn btn-lg btn-primary" href="<?php echo $movie['link'] ?>" role="button">Watch</a></p>
+            </div>
+          </div>
+        </div>
+		<?php
+				$first = "";
+			}
+		}
+		?>
+      </div>
+      <a class="left carousel-control" href="#myCarousel" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a>
+      <a class="right carousel-control" href="#myCarousel" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+    </div><!-- /.carousel -->
+
+	<div>
+		<a href="#" class="btn btn-default">Reload Movies</a>
+	</div>
+		
+	<script>
+		
+		var uid = (new Date()).getTime();
+		(function($,undefined){
+			$.storage.set("pageNumber", 0);
+			// initialize storage API
+			$.storage = new $.store();
+			if(! $.storage.get("pageNumber")){
+				$.storage.set("pageNumber", 0);
+			}
+			
+			// build some demo interface
+			var $buttons;
+			var load = function(){
+				var page = $.storage.get("pageNumber") +1;
+				$.storage.set("pageNumber", page);
+
+				console.log("Getting Page number: " + page);
+				//$.storage.set( 'event', new Date() );
+
+				$.getJSON('http://whateverorigin.org/get?url=' + 
+					encodeURIComponent('http://www.watchfreemovies.ch/watch-movies/page-'+ page +'/') + '&callback=?',
+					function(data){
+						//Query the item object from response
+						var items = $(data.contents).filter(".container").find(".index_item_ie");
+						var movies;
+						$(items).each(function(){
+							var link = $(this).find("a").first().attr("href");
+							var title = $(this).find("a").first().attr("title");
+							var year = title.substring(title.lastIndexOf("(")+1, title.lastIndexOf(")"));
+							
+							var item = { link: link, title: title, year: year };
+							push(movies, item);
+							
+							/*
+							(".carousel-inner").append(
+								'<div class="item">' +
+								  '<img data-src="holder.js/900x500/auto/#666:#6a6a6a/text:Second slide" alt="Second slide">' +
+								  '<div class="container">' +
+									'<div class="carousel-caption">' +
+									  '<h1>Another example headline.</h1>' +
+									  '<p>' + $(this).html() + '</p>' +
+									  '<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>' +
+									'</div>' +
+								  '</div>' +
+								'</div>');
+							*/
+						});
+						//var subval = $response.filter('#sub').text();
+						console.log(items);
+					}
+				);
+			}
+
+			var loading;
+			$(function()
+			{
+				$buttons = $( '<div></div>' ).prependTo( $( document.body ) );
+
+				$( '<button type="button" id="startLoading" class="btn btn-default navbar-btn">Load</button>' ).appendTo( $buttons ).bind( 'click', function()
+				{
+					load();
+					//loading = window.setInterval( load, 500 );
+					$("#stopLoading").removeAttr("disabled");
+					$(this).attr("disabled", "disabled");
+				});
+				
+				$( '<button type="button" id="stopLoading" class="btn btn-default navbar-btn">Stop</button>' ).appendTo( $buttons ).bind( 'click', function()
+				{
+					window.clearInterval(loading);
+					$("#startLoading").removeAttr("disabled");
+					$(this).attr("disabled", "disabled");
+				});
+				$( '<button type="button" class="btn btn-default navbar-btn">Refresh</button>' ).appendTo( $buttons ).bind( 'click', function()
+				{
+					location.reload();
+				});
+			});
+
+		})(jQuery);
+
+		/*
+		$.getJSON('http://whateverorigin.org/get?url=' + 
+			encodeURIComponent('http://www.watchfreemovies.ch/watch-movies/page-1/') + '&callback=?',
+			function(data){
+				//Query the item object from response
+				var items = $(data.contents).filter(".container").find(".index_item_ie");
+				$(items).each(function(){
+					$(".carousel-inner").append(
+						'<div class="item">' +
+						  '<img data-src="holder.js/900x500/auto/#666:#6a6a6a/text:Second slide" alt="Second slide">' +
+						  '<div class="container">' +
+							'<div class="carousel-caption">' +
+							  '<h1>Another example headline.</h1>' +
+							  '<p>' + $(this).html() + '</p>' +
+							  '<p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>' +
+							'</div>' +
+						  '</div>' +
+						'</div>');
+				});
+				//var subval = $response.filter('#sub').text();
+				console.log(items);
+			}
+		);
+		*/
+	</script>
+  </body>
+</html>
