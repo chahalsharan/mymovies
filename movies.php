@@ -1,4 +1,5 @@
 <?php require_once 'mysqlidb.php';?>
+<?php require_once 'databaseConfig.php' ?>
 <?php	
 
 	$year = date("Y");
@@ -10,14 +11,10 @@
 	if(isset($_GET['categories'])){
 		$categories = $_GET['categories'];
 	}
-	// start database connection if one doesnt already exist
-	if(!isset($db)){
-		$db = new Mysqlidb('localhost', 'root', '', 'let_me_watch_this');
-	}
 	
-	//$q = "SELECT m.*, l.* FROM movies m LEFT OUTER JOIN links l ON(m.id = l.movie_id) WHERE m.year = " . $year . " ORDER BY name ASC";
-	$db->where('year', 9);
-	$movies = $db->get('movies');
+	$movies = $db 	->join("links l", "l.movie_id = m.id", "LEFT")
+					->where('m.year', $year)
+					->get('movies m', null, 'm.name, m.year, l.link as link, m.thumbnail');
 	$numRows = $db->count;
 ?>
 <!-- Carousel
