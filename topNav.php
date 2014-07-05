@@ -19,6 +19,7 @@
 					<form accept-charset="UTF-8">
 					  <input style="margin-bottom: 15px;" type="text" id="fromPage" size="30" placeholder="From page" />
 					  <input style="margin-bottom: 15px;" type="text" id="toPage" size="30"  placeholder="To  page" />
+					  <input style="margin-bottom: 15px;" type="text" id="year" size="30"  placeholder="For Year" />
 					  <!--<input id="user_remember_me" style="float: left; margin-right: 10px;" type="checkbox" name="user[remember_me]" value="1" />
 					  <label class="string optional" for="user_remember_me"> Remember me</label>-->
 					 
@@ -54,11 +55,13 @@
 		$("#loadMovies").on("click", function(){
 			var fromPage = $("#fromPage").val();
 			var toPage = $("#toPage").val();
-			if(fromPage && toPage){
+			var year = $("#year").val();
+			
+			if(fromPage && toPage && year){
 				$.ajax({
 				  type: "POST",
 				  url: "reloadMovies.php",
-				  data: { fromPage: fromPage, toPage: toPage, cacheBuster: uid }
+				  data: { fromPage: fromPage, toPage: toPage, year: year, cacheBuster: uid }
 				})
 				.done(function( msg ) {
 					console.log(msg);
