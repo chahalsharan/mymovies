@@ -6,19 +6,46 @@
 <?php
 
 	if (isset($_GET['reloadMovieLinks'])) {
+		$db = getMysqlConnection();
+
+		$movies = array();
 		if (isset($_GET['movieId'])) {
 			$id = $_GET['movieId'];
+			$movies[$id] = Movie::loadFromDb($db, $id);
+		} else {
+			$movies = Movie::loadAllFromDB($db);
 		}
-		$db = getMysqlConnection();
-		$movies = getAllMovies($db, $id);
-		foreach ($movies as $id => $movie)  {
-			saveMovieLinksAndSynopsis($db, $id, $movie);
-			exit();
+
+		foreach ($movies as $movie)  {
+			error_log("DEBUG: going to load watching linnk for movie:" . $movie->id);
+			loadMovieLinksSynopsisAndGeneralRating($db, $movie);
+			#exit();
 		}
 		closeMysqlConnection($db);
 	}
+	
+	if (getRequestVariable('loadMovies') != FALSE) {
+		echo $fromPage = getRequestVariable('fromPage');
+		echo $toPage = getRequestVariable('toPage');
+		echo $fromYear = getRequestVariable('fromYear');
+		echo $toYear = getRequestVariable('toYear');
+
+		if (isset($fromPage) && isset($toPage) 
+			&& isset($fromYear) && isset($toYear)) {
+			$db = getMysqlConnection();
+			loadMovies($db, $fromPage, $toPage, (int)$fromYear, (int)$toYear);
+			closeMysqlConnection($db);
+		}else {
+			echo "fromPage, toPage not set";
+			http_response_code(500);
+		}
+	}
 
 	if (isset($_GET['reloadRottenData'])) {
+		loadRottenData();
+	}
+
+	function loadRottenData(){
 		$db = getMysqlConnection();
 
 		$movies = array();
@@ -30,26 +57,14 @@
 		}
 		$rots = RottenData::loadAllFromDB($db);
 		foreach ($movies as $movie)  {
-			loadMovieRottenData($db, $movie, $rots[$movie->id]);
+			if (isset($rots[$movie->id])) {
+				loadMovieRottenData($db, $movie, $rots[$movie->id]);
+			} else {
+				loadMovieRottenData($db, $movie);
+			}
+			sleep(2);
 		}
 		closeMysqlConnection($db);
-	}
-	
-	if (getRequestVariable('loadMovies') == FALSE) {
-		$fromPage = getRequestVariable('fromPage');
-		$fromPage = getRequestVariable('toPage');
-		$fromYear = getRequestVariable('fromYear');
-		$toYear = getRequestVariable('toYear');
-
-		if (isset($fromPage) && isset($toPage) 
-			&& isset($fromYear) && isset($toYear)) {
-			$db = getMysqlConnection();
-			loadMovies($db, $fromPage, $toPage, $fromYear, $toYear);
-			closeMysqlConnection($db);
-		}else {
-			echo "fromPage, toPage not set";
-			http_response_code(500);
-		}
 	}
 
 	function getRequestVariable($variableName) {
@@ -61,8 +76,9 @@
 		return;
 	}
 
-	function extractMovieLinksAndSynopsis($db, $movie) {
+	function extractMovieLinksAndSynopsis($movie) {
 		$link = urldecode($movie->link);
+		error_log("DEBUG: going to load link page: " . $link);
 		$linksRawData = loadHTML($link);
 		if (!isset($link)) {
 			error_log("timed out wile extracting movie link: " + $link);
@@ -83,36 +99,30 @@
 		if (isset($synopsis)) {
 			$movie->synopsis = $synopsis;
 		}
-		$rating = findMovieRating($html);
-		if (isset($rating)) {
-			if (!isset($movie->rating)) {
+
+		$generalRating = findMovieRating($html);
+		if (isset($generalRating)) {
+			if (! isset($movie->rating)) {
 				$movie->rating = new Rating();
 			}
-			$movie->rating->general = $rating;
+			$movie->rating->general = (float)$generalRating;
 		}
+		return $movie;
 	}
 
 	function findMovieLinks($html) {
-		$link = false;
+		$link = FALSE;
 		if (isset($html)) {
-
-			foreach ($html->find('.movie_version_link') as $linkData) {
-				
-				$isStarLink = false;
-				foreach ($linkData->find("img") as $starLink) {
-					if (strpos($starLink->src, "star") != false) {
-						$isStarLink = true;
-						break;
-					}
-				}
-				if ($isStarLink) {
-					foreach ($linkData->find("a") as $link) {
-						$link = "http://www.watchfreemovies.ch". $link->href;
-						break;
-					}
+			foreach ($html->find(".movie_version_alt", 0)->find("tr") as $row) {
+				$dvdLink = $row->find(".quality_dvd", 0);
+				if (isset($dvdLink)) {
+					error_log("DEBUG: found dvd quality link");
+					$linkData = $row->find('.movie_version_link', 0);
+					$link = $linkData->find("a", 0);
+					$link = "http://www.watchfreemovies.ch". $link->href;
+					break;
 				}
 			}
-			
 		}else {
 			echo "connection timed out";
 		}
@@ -122,7 +132,7 @@
 	function findMovieSynopsis($html) {
 		if (isset($html)) {
 			foreach ($html->find(".movie_info") as $movieInfo) {
-				$summary = $movieInfo->find("p", 0)->find('text', 1);
+				$summary = strip_tags($movieInfo->find("p", 0)->find('text', 1));
 				$summary = substr($summary, 2);
 				return $summary;
 			}
@@ -132,8 +142,10 @@
 	function findMovieRating($html) {
 		if (isset($html)) {
 			foreach ($html->find(".movie_info") as $movieInfo) {
+
+				#echo "rating:" . $rating = $movieInfo->find(".current-rating", 0)->find('span', 0)->find('text', 0);
 				$rating = $movieInfo->find(".current-rating", 0)->find('span', 0)->find('text', 0);
-				return $rating;
+				return strip_tags($rating);
 			}
 		}
 	}
@@ -145,6 +157,13 @@
 		}
 	}
 
+	function loadMovieLinksSynopsisAndGeneralRating($db, $movie){
+		$movie = Movie::loadFromDb($db, $movie->id);
+		$movie = extractMovieLinksAndSynopsis($movie);
+		echo "<pre>";print_r($movie); echo "</pre>";
+		$movie->saveOrUpdate($db);
+	}
+
 	function loadMovies($db, $fromPage, $toPage, $fromYear, $toYear) {
 
 		$startPage = $fromPage;
@@ -152,6 +171,8 @@
 		echo $startPage. "-- " . $endPage;
 		while($startPage <= $endPage) {
 			
+			$url = 'http://www.watchfreemovies.ch/watch-movies/page-'. $startPage .'/';
+			error_log("DEBUG: Going to load movies page: " . $url);
 			$rawHtml = loadHTML('http://www.watchfreemovies.ch/watch-movies/page-'. $startPage .'/');
 			if (!isset($rawHtml)) {
 				error_log("Times out while loading page: " . $startPage);
@@ -170,21 +191,23 @@
 				
 				$movieTitle = ($item->find('a', 0)->title);
 				$movieYear = (substr($movieTitle, -5, -1));
-				if ($year == $movieYear) {
+				$movieYear = (int)$movieYear;
+				if ($movieYear >= $fromYear && $movieYear <= $toYear) {
 
 					$movieLink = ($item->find('a', 0)->href);
 					$movieTitle = substr($movieTitle, 6, -7);
-					$movieThumbnail = "http://www.silvermorgandollar.com/images/no_image.gif";
-					foreach ($item->find('img') as $image) {
-						if (strpos($image->src, "thumbs") != false) {
-							$movieThumbnail = $image->src;
-							break;
-						}
-					}
-					
+
 					$movieId = Movie::existsInDb($db, $movieTitle);
-					
 					if (! isset($movieId)) {
+						error_log("DEBUG: movie doe not exist:" . $movieTitle);
+						$movieThumbnail = "http://www.silvermorgandollar.com/images/no_image.gif";
+						foreach ($item->find('img') as $image) {
+							if (strpos($image->src, "thumbs") != false) {
+								$movieThumbnail = $image->src;
+								break;
+							}
+						}
+					
 						$movie = new Movie();
 						$movie->name = $movieTitle;
 						$movie->link = $movieLink;
@@ -193,13 +216,16 @@
 						
 						foreach ($item->find('.item_categories', 0)->find('a') as $category)  {
 							$cat = $category->find('text', 0);
-							array_push($movie->categories, $cat);							
+							array_push($movie->categories, strip_tags($cat));							
 						}
-						$movie->save();
+
+						$movie = extractMovieLinksAndSynopsis($movie);
+						$movie->save($db);
 					}else {
+						error_log("DEBUG: movie exists:" . $movieTitle);
 						$movie = Movie::loadFromDb($db, $movieId);
 					}
-					extractMovieLinksAndSynopsis($db, $movie);
+					echo "<pre>Movie "; print_r($movie); echo "</pre>";
 				}
 			}
 			sleep(1);
@@ -240,13 +266,16 @@
 	    return $content;
 	}
 
-	function loadMovieRottenData($db, $movie, $rotten) {
+	function loadMovieRottenData($db, $movie, $rotten = NULL) {
 		$twoDayInterval = (24 * 60 * 60);
-		$rottenInterval = floor((time() - strtotime($rotten->loadDate))/$twoDayInterval);
-		if (isset($rotten)
-			&& $rottenInterval < 0)  {
-			error_log("DEBUG: Skipping rotten data reload as it was loaded recently, for movie: " . $movie->id);
-			return;
+		
+		if (isset($rotten)){
+			error_log("DEBUG: rottne data exists for movie:" . $movie->id);
+			$rottenInterval = floor((time() - strtotime($rotten->loadDate))/$twoDayInterval);
+			if($rottenInterval < 2)  {
+				error_log("DEBUG: Skipping rotten data reload as it was loaded recently, for movie: " . $movie->id);
+				return;
+			}
 		}
 		$url = "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=kvdsxtvpapb8ywawa2dntuvx&q=" .
 			urlencode($movie->name) . "+" . $movie->year . 
@@ -278,9 +307,10 @@
 		$rotten->criticsScore = $movieRotternData['ratings']['critics_score'];
 		$rotten->audienceRating = $movieRotternData['ratings']['audience_rating'];
 		$rotten->audienceScore = $movieRotternData['ratings']['audience_score'];
-		$rotten->audienceScore = $movieRotternData['ratings']['audience_score'];
 		$rotten->thumbnail = $movieRotternData['posters']['thumbnail'];;
 		$rotten->synopsis = $movieRotternData['synopsis'];
+		$rotten->rottenLink = $movieRotternData['links']['alternate'];
+		
 		$rotten->saveOrUpdate($db);
 
 		error_log("DEBUG:saved rotten data : " . $rotten->id);

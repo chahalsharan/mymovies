@@ -3,14 +3,16 @@
 
 <?php	
 
+	$db = getMysqlConnection();
 	$cols = Array("year, count(*) as count");
 	$years = $db
 				->groupBy("year")
 				->orderBy("year", "desc")
 				->get("movies", null, $cols);
+	closeMysqlConnection($db);
 ?>
 <!-- Three columns of text below the carousel -->
-	<select id="movieYearsFilter" multiple="multiple" style="width:400px" class="populate placeholder select2-offscreen" tabindex="-1"><option></option>
+	<select id="movieYearsFilter" multiple="multiple" style="width:300px" class="populate placeholder select2-offscreen" tabindex="-1"><option></option>
 	<?php
 	// if we have a result loop over the result
 	foreach($years as $year){

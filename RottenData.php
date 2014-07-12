@@ -11,6 +11,7 @@
         public $movieId;
         public $loadDate;
         public $rottenReferenceId;
+        public $rottenLink;
 
         public static function loadAllFromDB($db) {
             $rottenData = $db->get("rotten_data");
@@ -29,6 +30,7 @@
                 $rot->movieId = $rotten['movie_id'];
                 $rot->loadDate = $rotten['load_date'];
                 $rot->rottenReferenceId = $rotten['rotten_reference_id'];
+                $rot->rottenLink = $rotten['rotten_link'];
 
                 $rots[$rot->movieId] = $rot;
             }
@@ -56,6 +58,7 @@
             $rot->movieId = $rotten['movie_id'];
             $rot->loadDate = $rotten['load_date'];
             $rot->rottenReferenceId = $rotten['rotten_reference_id'];
+            $rot->rottenLink = urldecode($rotten['rotten_link']);
 
             return $rot;
         }
@@ -89,6 +92,10 @@
             if (isset($this->synopsis)) {
                 $data['synopsis'] = urlencode($this->synopsis);
             }
+            if (isset($this->rottenLink)) {
+                $rotten['rotten_link'] = urlencode($this->rottenLink);
+            }
+            
 
             if (isset($this->movieId)) {
                 $data['movie_id'] = $this->movieId;

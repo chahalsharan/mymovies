@@ -26,17 +26,38 @@
 					  <input id="loadMovies" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" type="button" value="Load" />
 					</form>
 				</div>
-				<!--
-				<ul class="dropdown-menu">
-				  <li></li>
-				  <li><input type="text" id="fromPage" /></li>
-				  <li><input type="text" id="toPage" /></li>
-				  <li class="divider"></li>
-				  <li class="nav-header">Nav header</li>
-				  <li><a href="#">Separated link</a></li>
-				  <li><a href="#">One more separated link</a></li>
-				</ul>
-				-->
+			</li>
+			<li class="dropdown">
+				<a href="#" id="filterDropdown" class="dropdown-toggle" data-toggle="dropdown">Filter <b class="caret"></b></a>
+				<div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;" >
+					<form accept-charset="UTF-8">
+					  	<div class="row">
+					      <div class="col-md-5">
+					        <?php include 'movieYears.php' ?>
+					      </div>
+				    	</div>
+				    	<div class="row top-buffer-small ">
+				    		<div class="col-md-5">
+					        	<?php include 'movieCategories.php' ?>
+					      	</div>
+					  	</div>
+					  	<div class="row top-buffer-small ">
+				    		<div class="col-md-5">
+					        	<?php include 'movieActors.php' ?>
+					      	</div>
+					  	</div>
+					    <div class="row top-buffer-small ">
+					      <div class="col-md-10">
+					        Show movies with DVD links only <input type="checkbox" id="featuredOnly" value="featured" checked="true" />
+					      </div>
+					    </div>
+					    <div class="row top-buffer-small ">
+					      <div class="col-md-5">
+					        <input id="filterMovies" class="btn btn-primary" style="clear: left; width: 100%; height: 32px; font-size: 13px;" type="button" value="Filter" />
+					      </div>
+					    </div>
+					</form>
+				</div>
 			</li>
 			<li><a href="reloadMovies.php?startPage=1&endPage=1" id="reload">Reload</a></li>
 		  </ul>
@@ -74,6 +95,36 @@
 				alert("Please select valid from and to page");
 			}
 		});
+	    $("#filterMovies").on("click", function(){
+	      var years = $("#movieYearsFilter").val();
+	      var categories = $("#movieCategoriesFilter").val();
+	      var actors = $("#movieActorsFilter").val();
+	      var notFeatured = !$("#featuredOnly").is(':checked');
+	      if(years || categories || actors){
+	        $.ajax({
+	          type: "GET",
+	          url: "movies.php?filter=yes" + getIfNotNull("&years", years) + 
+	          		getIfNotNull("&categories", categories) + 
+	          		getIfNotNull("&actors", actors) + 
+	          		getIfNotNull("&notFeatured", notFeatured)
+	        })
+	        .done(function( data ) {
+	          $("#moviesContainer").html(data);
+	          $("#filterDropdown").dropdown('toggle')
+	        })
+	        .fail(function(msg){
+	          console.error("failed " + msg); 
+	        });
+	      }
+	    });
+	    var getIfNotNull = function (label, toGet){
+	      if(toGet){
+	        return label + "=" + toGet;
+	      }else{
+	        return "";
+	      }
+	    }
+
 	})(jQuery);
 
 </script>

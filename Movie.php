@@ -32,8 +32,8 @@
         }
 
         public function saveOrUpdate($db) {
-            if (isset($this->movieId)) {
-                $existingMovieId = $this->movieId;
+            if (isset($this->id)) {
+                $existingMovieId = $this->id;
             } else {
                 $existingMovieId = Movie::existsInDb($db, $this->name);
             }
@@ -49,12 +49,12 @@
         }
 
         public function update($db, $updatedMovie) {
-            $data = Array ("name" => urlencode($this->name),
-                           "link" => urlencode($this->link),
-                           "year" => urlencode($this->year),
-                           "thumbnail" => urlencode($this->thumbnail),
-                           "rating" => $this->rating->general,
-                           "synopsis" => urlencode($this->synopsis)
+            $data = Array ("name" => urlencode($updatedMovie->name),
+                           "link" => urlencode($updatedMovie->link),
+                           "year" => urlencode($updatedMovie->year),
+                           "thumbnail" => urlencode($updatedMovie->thumbnail),
+                           "rating" => $updatedMovie->rating->general,
+                           "synopsis" => urlencode($updatedMovie->synopsis)
             );
             $db ->where('id', $this->id)
                 ->update('movies', $data);
@@ -65,7 +65,8 @@
             $newActs = array_diff($updatedMovie->actors, $this->actors);
             $this->saveOrUpdateActors($db, $newActs);
 
-            if ($this->watch != $updatedMovie->watch) {
+            if (isset($updatedMovie->watch) 
+                && $this->watch != $updatedMovie->watch) {
                 $this->saveOrUpdateWatchLinks($db, $updatedMovie->watch);
             }
         }
@@ -88,7 +89,7 @@
                 $this->saveOrUpdateCategories($db, $this->categories);
             }
             if (isset($this->actors)) {
-                $this->saveOrUpdateActors($db, $this->categories);
+                $this->saveOrUpdateActors($db, $this->actors);
             }
             if (isset($this->watch)) {
                 $this->saveOrUpdateWatchLinks($db, $this->watch);
@@ -98,17 +99,22 @@
         public function saveOrUpdateWatchLinks($db, $watchLink) {
             $watchLink = urlencode($watchLink);
 
-            $data = Array ("movie_id" => $this->id,
-                           "link" => $watchLink,
-                           "link_date" => date('Y-m-d'));
-            $existingLink = $db ->where("movie_id", $this->id)
-                                ->where("link", $watchLink)
-                                ->get("links");
-            if ($db->count > 0) {
-                $db ->where("link_id", $existingLink[0]['link_id'])
-                    ->update('links', $data);
-            }else{
-                $db->insert('links', $data);
+            if(isset($watchLink)){
+                error_log("DEBUG: trying to save watch link:" . $watchLink);
+                $data = Array ("movie_id" => $this->id,
+                               "link" => $watchLink,
+                               "link_date" => date('Y-m-d'));
+                $existingLink = $db ->where("movie_id", $this->id)
+                                    ->where("link", $watchLink)
+                                    ->get("links");
+                if ($db->count > 0) {
+                    $db ->where("link_id", $existingLink[0]['link_id'])
+                        ->update('links', $data);
+                }else{
+                    $db->insert('links', $data);
+                }
+            } else {
+                error_log("ERROR: trying to save blank watch link");
             }
         }
 
@@ -119,10 +125,7 @@
                 $actors = $updatedActors;
             }
             $allActors = Movie::$allActors;
-            echo "<pre>Actors";
-            print_r($allActors);
-            echo "</pre>";
-
+            $existingActors = Movie::getActors($db, $this->id);
             foreach ($actors as $act) {
                 $actId = 0;
                 if (isset($allActors[$act])) {
@@ -132,9 +135,11 @@
                     $actId = $db->insert('actors', $data);
                     $allActors[$act] = $actId;
                 }
-                $data = Array("actor_id" => $actId,
-                              "movie_id" => $this->id);
-                $db->insert("movie_actors", $data);
+                if(! isset($existingActors[$actId])){
+                    $data = Array("actor_id" => $actId,
+                                  "movie_id" => $this->id);
+                    $db->insert("movie_actors", $data);
+                }
             }
         }
 
@@ -143,19 +148,52 @@
             if (isset($updatedCategories)) {
                 $categories = $updatedCategories;
             }
+            $existingCategories = Movie::getCategories($db, $this->id);
+            $allCategories = Movie::$allCategories;
             foreach ($categories as $cat) {
+
                 $catId = 0;
                 if (isset($allCategories[$cat])) {
+                    #error_log("DEBUG: category exists:" . $cat . ", id:" . $allCategories[$cat]);
                     $catId = $allCategories[$cat];
                 }else{
+                    #error_log("DEBUG: saving new category:" . $cat);
                     $data = Array("category" => urlencode($cat));                           
                     $catId = $db->insert('categories', $data);
                     $allCategories[$cat] = $catId;
                 }
-                $data = Array("category_id" => $catId,
-                              "movie_id" => $movieId);
-                $db->insert("movie_categories", $data);
+                if(! isset($existingCategories[$catId])){
+                    $data = Array("category_id" => $catId,
+                                  "movie_id" => $this->id);
+                    $db->insert("movie_categories", $data);
+                }
             }
+        }
+
+        public static function getCategories($db, $id){
+            $categories = $db   ->join("categories c", "c.category_id = mc.category_id")
+                                ->where("mc.movie_id", $id)
+                                ->orderBy("c.category", "asc")
+                                ->get('movie_categories mc', null, 
+                                        'c.category_id, c.category');
+            $cats = array();
+            foreach($categories as $cat){
+                $cats[$cat['category_id']] = $cat['category'];
+            }
+            return $cats;
+        }
+
+        public static function getActors($db, $id){
+            $actors = $db   ->join("actors a", "a.actor_id = ma.actor_id")
+                                ->where("ma.movie_id", $id)
+                                ->orderBy("a.name", "asc")
+                                ->get('movie_actors ma', null, 
+                                        'a.actor_id, a.name');
+            $acts = array();
+            foreach($actors as $act){
+                $acts[$act['actor_id']] = $act['name'];
+            }
+            return $acts;
         }
 
         public static function existsInDb($db, $name) {
@@ -249,10 +287,6 @@
                 }
                 array_unique($movie->categories, SORT_REGULAR);
                 array_unique($movie->actors);
-
-                echo "<pre>Actors";
-                print_r($movie->actors);
-                echo "</pre>";
 
                 return $movie;
             }
