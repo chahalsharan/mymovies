@@ -12,6 +12,8 @@
         public $loadDate;
         public $rottenReferenceId;
         public $rottenLink;
+        public $releaseDate;
+        public $dvdReleaseDate;
 
         public static function loadAllFromDB($db) {
             $rottenData = $db->get("rotten_data");
@@ -31,6 +33,8 @@
                 $rot->loadDate = $rotten['load_date'];
                 $rot->rottenReferenceId = $rotten['rotten_reference_id'];
                 $rot->rottenLink = $rotten['rotten_link'];
+                $rot->releaseDate = $rotten['release_date'];
+                $rot->dvdReleaseDate = $rotten['dvd_release_date'];
 
                 $rots[$rot->movieId] = $rot;
             }
@@ -59,6 +63,8 @@
             $rot->loadDate = $rotten['load_date'];
             $rot->rottenReferenceId = $rotten['rotten_reference_id'];
             $rot->rottenLink = urldecode($rotten['rotten_link']);
+            $rot->releaseDate = $rotten['release_date'];
+            $rot->dvdReleaseDate = $rotten['dvd_release_date'];
 
             return $rot;
         }
@@ -95,7 +101,12 @@
             if (isset($this->rottenLink)) {
                 $rotten['rotten_link'] = urlencode($this->rottenLink);
             }
-            
+            if(isset($this->releaseDate)){
+                $rotten['release_date'] = $this->releaseDate;
+            }
+            if(isset($this->dvdReleaseDate)){
+                $rotten['dvd_release_date'] = $this->dvdReleaseDate;
+            }
 
             if (isset($this->movieId)) {
                 $data['movie_id'] = $this->movieId;

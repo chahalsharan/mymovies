@@ -4,7 +4,14 @@
 <?php require_once 'Movie.php' ?>
 <?php require_once 'RottenData.php' ?>
 <?php
-
+	# http://localhost/~sharandc/mymovies/reloadMovies.php?loadMovies=1&fromPage=10&toPage=1&fromYear=2000&toYear=2014&reloadRottenData=1
+	session_start();
+	if(!(isset($_SESSION['type']) && $_SESSION['type'] == "admin")){
+		error_log("DEBUG: Not admin");
+		echo "Not Authorized";
+		http_response_code(403);
+		exit();
+	}
 	if (isset($_GET['reloadMovieLinks'])) {
 		$db = getMysqlConnection();
 
@@ -19,7 +26,7 @@
 		foreach ($movies as $movie)  {
 			error_log("DEBUG: going to load watching linnk for movie:" . $movie->id);
 			loadMovieLinksSynopsisAndGeneralRating($db, $movie);
-			#exit();
+			sleep(2);
 		}
 		closeMysqlConnection($db);
 	}
@@ -57,12 +64,13 @@
 		}
 		$rots = RottenData::loadAllFromDB($db);
 		foreach ($movies as $movie)  {
+			error_log("DEBUG: going to load rottend for movie: " . $movie->id);
 			if (isset($rots[$movie->id])) {
 				loadMovieRottenData($db, $movie, $rots[$movie->id]);
 			} else {
 				loadMovieRottenData($db, $movie);
 			}
-			sleep(2);
+			sleep(1);
 		}
 		closeMysqlConnection($db);
 	}
@@ -93,20 +101,20 @@
 		$watchingLink = findMovieLinks($html);
 		if (isset($watchingLink)) {
 			$movie->watch = $watchingLink;
-		}
 		
-		$synopsis = findMovieSynopsis($html);
-		if (isset($synopsis)) {
-			$movie->synopsis = $synopsis;
-		}
+    		$synopsis = findMovieSynopsis($html);
+    		if (isset($synopsis)) {
+    			$movie->synopsis = $synopsis;
+    		}
 
-		$generalRating = findMovieRating($html);
-		if (isset($generalRating)) {
-			if (! isset($movie->rating)) {
-				$movie->rating = new Rating();
-			}
-			$movie->rating->general = (float)$generalRating;
-		}
+    		$generalRating = findMovieRating($html);
+    		if (isset($generalRating)) {
+    			if (! isset($movie->rating)) {
+    				$movie->rating = new Rating();
+    			}
+    			$movie->rating->general = (float)$generalRating;
+    		}
+        }
 		return $movie;
 	}
 
@@ -171,6 +179,8 @@
 		echo $startPage. "-- " . $endPage;
 		while($startPage <= $endPage) {
 			
+			error_log("DEBUG: going to load for page:" . $startPage);
+
 			$url = 'http://www.watchfreemovies.ch/watch-movies/page-'. $startPage .'/';
 			error_log("DEBUG: Going to load movies page: " . $url);
 			$rawHtml = loadHTML('http://www.watchfreemovies.ch/watch-movies/page-'. $startPage .'/');
@@ -303,10 +313,28 @@
 		$rotten->rottenReferenceId = $movieRotternData['id'];
 		$rotten->title = $movieRotternData['title'];
 		$rotten->movieId = $movie->id;
-		$rotten->criticsRating = $movieRotternData['ratings']['critics_rating'];
-		$rotten->criticsScore = $movieRotternData['ratings']['critics_score'];
-		$rotten->audienceRating = $movieRotternData['ratings']['audience_rating'];
-		$rotten->audienceScore = $movieRotternData['ratings']['audience_score'];
+		if(isset($movieRotternData['ratings'])) {
+			if(isset($movieRotternData['ratings']['critics_rating'])){
+				$rotten->criticsRating = $movieRotternData['ratings']['critics_rating'];
+			}
+			if(isset($movieRotternData['ratings']['critics_score'])){
+				$rotten->criticsScore = $movieRotternData['ratings']['critics_score'];
+			}			
+			if(isset($movieRotternData['ratings']['audience_score'])){
+				$rotten->audienceScore = $movieRotternData['ratings']['audience_score'];
+			}
+			if(isset($movieRotternData['ratings']['audience_rating'])){
+				$rotten->audienceRating = $movieRotternData['ratings']['audience_rating'];
+			}
+		}
+		if(isset($movieRotternData['release_dates'])){
+			if(isset($movieRotternData['release_dates']['theater'])){
+				$rotten->releaseDate = $movieRotternData['release_dates']['theater'];
+			}
+			if(isset($movieRotternData['release_dates']['dvd'])){
+				$rotten->dvdReleaseDate = $movieRotternData['release_dates']['dvd'];
+			}
+		}
 		$rotten->thumbnail = $movieRotternData['posters']['thumbnail'];;
 		$rotten->synopsis = $movieRotternData['synopsis'];
 		$rotten->rottenLink = $movieRotternData['links']['alternate'];

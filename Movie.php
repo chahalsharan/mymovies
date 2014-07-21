@@ -12,6 +12,7 @@
         public $rating;
         public $synopsis;
         public $thumbnail;
+        public $rottenLink;
         public $actors = array();
         public $categories = array();
 
@@ -245,7 +246,8 @@
                                        'r.critics_score,' .
                                        'r.audience_rating,' .
                                        'r.audience_score,' .
-                                       'r.synopsis')
+                                       'r.synopsis,' .
+                                       'r.rotten_link')
                             ->orderBy("m.year", "desc")
                             ->orderBy("m.name", "asc")
                             ->get('movies m', null, 
@@ -255,7 +257,7 @@
                                 'c.category, ' .
                                 'a.name as actor_name, ' .
                                 'r.critics_rating, r.critics_score, r.audience_rating, r.audience_score, ' .
-                                'r.synopsis as rotten_synopsis');
+                                'r.synopsis as rotten_synopsis, r.rotten_link');
             if ($db->count > 0) {
                 $movie = new Movie($movieId);
                 foreach ($movieDb as $m) {
@@ -266,7 +268,9 @@
                     $movie->thumbnail = urldecode($m['thumbnail']);
                     $movie->rating = new Rating($m['rating_general']);
                     $movie->synopsis = urldecode($m['synopsis_general']);
-                    $movie->watch = urldecode($m['watching_link']);
+                    if(isset($m['watching_link'])){
+                        $movie->watch = urldecode($m['watching_link']);    
+                    }
                     if (isset($m['category'])) {
                         array_push($movie->categories, urldecode($m['category']));
                     }
@@ -283,6 +287,9 @@
                     }
                     if (isset($m['rotten_synopsis'])) {
                         $movie->synopsis = urldecode($m['rotten_synopsis']);
+                    }
+                    if(isset($m['rotten_link'])){
+                        $movie->rottenLink = urldecode($m['rotten_link']);
                     }
                 }
                 array_unique($movie->categories, SORT_REGULAR);

@@ -3,7 +3,7 @@
 
 <?php   
     $db = getMysqlConnection();
-    $cols = Array("c.category_id, category, count(*) as count");
+    $cols = Array("category, count(*) as count");
     $categories = $db
                 ->join("movie_categories mc", "mc.category_id = c.category_id")
                 ->groupBy("c.category")
@@ -18,7 +18,7 @@
   foreach($categories as $cat){
   ?>
     <p>
-        <option value="<?php echo $cat['category_id'] ?>">
+        <option value="<?php echo $cat['category'] ?>">
           <h2><?php echo $cat['category'] . " ( ". $cat['count'] ." )"  ?></h2>
         </option>
       </p>
