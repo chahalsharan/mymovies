@@ -96,6 +96,13 @@
                                 <?php echo (implode(", ", array_unique($movie->actors))) ?>
                             </div>
                             <div class="lib-row lib-header">
+                                Categories
+                                <div class="lib-header-seperator"></div>
+                            </div>
+                            <div class="lib-row lib-desc">
+                                <?php echo (implode(", ", array_unique($movie->categories))) ?>
+                            </div>
+                            <div class="lib-row lib-header">
                                 <div class="lib-header-seperator"></div>
                             </div>
                             <div class="lib-row lib-desc">

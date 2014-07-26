@@ -15,6 +15,7 @@
         public $rottenLink;
         public $actors = array();
         public $categories = array();
+        public $lastUpdated;
 
         private static $allCategories;
         private static $allActors;
@@ -55,7 +56,8 @@
                            "year" => urlencode($updatedMovie->year),
                            "thumbnail" => urlencode($updatedMovie->thumbnail),
                            "rating" => $updatedMovie->rating->general,
-                           "synopsis" => urlencode($updatedMovie->synopsis)
+                           "synopsis" => urlencode($updatedMovie->synopsis),
+                           "last_updated" => date('Y-m-d h:m:s')
             );
             $db ->where('id', $this->id)
                 ->update('movies', $data);
@@ -76,7 +78,8 @@
             $data = Array ("name" => urlencode($this->name),
                            "link" => urlencode($this->link),
                            "year" => urlencode($this->year),
-                           "thumbnail" => urlencode($this->thumbnail)
+                           "thumbnail" => urlencode($this->thumbnail),
+                           "last_updated" => date('Y-m-d h:m:s')
             );
             if (isset($this->rating->general)) {
                 $data['rating'] = $this->rating->general;
@@ -237,6 +240,7 @@
                                        'm.year,' .
                                        'l.link,' .
                                        'm.thumbnail,' .
+                                       'm.last_updated, ' .
                                        'm.rating ,' .
                                        'm.synopsis,' .
                                        'l.link,' .
@@ -251,7 +255,7 @@
                             ->orderBy("m.year", "desc")
                             ->orderBy("m.name", "asc")
                             ->get('movies m', null, 
-                                'm.id, m.name, m.year, m.link as movie_link, m.thumbnail, ' .
+                                'm.id, m.name, m.year, m.link as movie_link, m.thumbnail, m.last_updated, ' .
                                 'm.rating as rating_general, m.synopsis as synopsis_general,' .
                                 'l.link as watching_link, ' .
                                 'c.category, ' .
@@ -268,6 +272,7 @@
                     $movie->thumbnail = urldecode($m['thumbnail']);
                     $movie->rating = new Rating($m['rating_general']);
                     $movie->synopsis = urldecode($m['synopsis_general']);
+                    $movie->lastUpdated = $m['last_updated'];
                     if(isset($m['watching_link'])){
                         $movie->watch = urldecode($m['watching_link']);    
                     }

@@ -71,7 +71,11 @@
 			if (isset($rots[$movie->id])) {
 				loadMovieRottenData($db, $movie, $rots[$movie->id]);
 			} else {
-				loadMovieRottenData($db, $movie);
+                if(! isUpdatedSinceHours($movie->lastUpdated, 24)){
+				    loadMovieRottenData($db, $movie);
+                }else{
+                    error_log("DEBUG: loaded recently **skipping**:" . $movie->id);
+                }
 			}
 			sleep(1);
 		}
@@ -171,15 +175,24 @@
 	function loadMovieLinksSynopsisAndGeneralRating($db, $movie){
 		$movie = Movie::loadFromDb($db, $movie->id);
         if(! isset($movie->watch)){
-		  $movie = extractMovieLinksAndSynopsis($movie);
-		  error_log("DEBUG: LOAD_LINK: Loaded movie watch link for " . $movie->id);
-		  $movie->saveOrUpdate($db);
-          sleep(1);
+            // check if the movie has been updated in last 24 hours
+            if(! isUpdatedSinceHours($movie->lastUpdated, 24)){
+                $movie = extractMovieLinksAndSynopsis($movie);
+                error_log("DEBUG: LOAD_LINK: Loaded movie watch link for " . $movie->id);
+                $movie->saveOrUpdate($db);
+                sleep(1);
+            }else{
+                error_log("DEBUG: movie updated recently ** skipping **:" . $movie->id);
+            }
         }else{
             error_log("DEBUG: LOAD_LINK: Movie watch link laredy present for " . $movie->id);
         }
         return $movie;
 	}
+
+    function isUpdatedSinceHours($var, $hours){
+        return (time()-(60*60*$hours)) < strtotime($var);
+    }
 
 	function loadMovies($db, $fromPage, $toPage, $fromYear, $toYear) {
 
