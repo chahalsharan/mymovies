@@ -21,11 +21,12 @@
   <link href="http://ivaynberg.github.io/select2/select2-3.5.0/select2.css?ts=2014-06-26T15%3A33%3A45-07%3A00" rel="stylesheet">
   <script src="http://ivaynberg.github.io/select2/select2-3.5.0/select2.js?ts=2014-06-26T15%3A33%3A45-07%3A00"></script>
   <!--<script type="text/javascript" src="bootstrap-rating.js"></script>-->
-  <link href="star-rating.css" media="all" rel="stylesheet" type="text/css"/>
+  <link href="css/star-rating.css" media="all" rel="stylesheet" type="text/css"/>
+  <link href="css/letMeWatchThis.css" rel="stylesheet" type="text/css"/>
+  <link rel="icon" href="favicon.ico">
   <script src="js/lib/star-rating.js" type="text/javascript"></script>
   <script src="js/require.js" type="text/javascript"></script>
-  <link href="letMeWatchThis.css" rel="stylesheet">
-  <link rel="icon" href="favicon.ico">
+  
   <title>MyMovies</title>
  </HEAD>
 <body>
