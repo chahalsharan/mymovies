@@ -26,49 +26,6 @@
     unset($full_data['currentPage']);
     $params = http_build_query($full_data);
 
-    if($numPages == 1){
-        echo "";
-    }else{
 ?>
 <input type="hidden" id="currentQueryParameters" value="<?php echo $params ?>">
-<ul class="pagination">
-    <li class="<?php echo $firstPageLinkDisabled ?>">
-        <a href="#!" class="goToPage" data-page="<?php echo $prevPage ?>">&laquo;</a>
-    </li>
-    <?php for($i = 0; $i < $numPages; $i++){ 
-        $active = "";
-        if($i+1 == $currentPage){ 
-            $active = "active";
-        }
-        ?>
-    <li class="<?php echo $active ?>"><a href="#!" class="goToPage" data-page="<?php echo $i+1 ?>"><?php echo $i+1 ?></a></li>
-    <?php } ?>
-    <li class="<?php echo $lastPageLinkDisabled ?>">
-        <a href="#!" class="goToPage" data-page="<?php echo $nextPage ?>">&raquo;</a>
-    </li>
-</ul>
-
-<script>
-    (function($){
-        $(".goToPage").on("click", function(){
-          var page = $(this).attr("data-page");
-          var params = $("#currentQueryParameters").val();
-          if(page){
-            $.ajax({
-              type: "GET",
-              url: "movies.php?" + params 
-                + "&currentPage=" + page
-            })
-            .done(function( data ) {
-              $("#moviesContainer").html(data);
-            })
-            .fail(function(msg){
-              console.error("failed " + msg); 
-            });
-          }
-        })
-    })(jQuery);
-</script>
-<?php
-    }
-?>
+<input type="hidden" id="moviesPaginationPages" value="<?php echo $numPages ?>">

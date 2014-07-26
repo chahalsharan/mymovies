@@ -31,6 +31,7 @@
 			getFilterCriteriaFromRequest("searchText", FALSE)
 		);
 		$numMovies = count($numMovies);
+        error_log("DEBUG: numMovies found :" . $numMovies);
     }
     $NUM_ROWS = $numMovies;
 
@@ -85,6 +86,7 @@
 	?>
 			<div class="col-md-4 detailsLink" data-movieId="<?php echo $movieId ?>">
 	    		<div>
+                    <div class="pull-right ignoreLinks" style="display:none"><span class="glyphicon glyphicon-remove"></span></div>
 					<img src="<?php echo $image ?>" alt="<?php echo $name  ?>" class="img-circle img-thumbnail">
 					<h5>
 						<?php echo $name . " (" . $year . ")" ?> 
@@ -125,9 +127,7 @@
 	}
 ?>
 	</div>
-	<div class="row destacados">
-		<?php include "paginate.php" ?>
-	</div>
+    <?php include "paginate.php" ?>
 </div>
 
 <script>

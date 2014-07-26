@@ -1,8 +1,8 @@
 <?php session_start() ?>
 <div class="navbar-wrapper">
   <div class="container">
-  	<div class="index" style="float:left;" data-link="<?php echo $SITE_URL . "letMeWatchThis.php" ?>">
-    	<img src="myMovies.jpg">
+  	<div style="float:left;" data-link="<?php echo $SITE_URL . "letMeWatchThis.php" ?>">
+    	<img class="index" src="myMovies.jpg">
   	</div>
 	<div class="navbar navbar-inverse navbar-static-top" style="margin-left:210px; height: 25px;" role="navigation">
 	  <div class="container">
@@ -53,11 +53,12 @@
 			<?php } ?>
             <li id="logoutNavOptions" <?php if(!isset($_SESSION['userId'])) echo 'style="display: none;"'; ?>><a href="userController.php?action=logout" id="reload">Logout</a></li>
 		  </ul>
-		  <div class="col-sm-3 col-md-5 pull-right">
+          <div class="col-xs-1">&nbsp;</div>
+		  <div class="col">
 		  	<form class="navbar-form" id="searchMovie" role="search">
 			  	<div class="input-group">
 				  <input type="text" id="searchText" class="form-control input-x-large	">
-				  <span class="input-group-addon">
+				  <span class="input-group-addon" style="cursor:text;">
 				  	<span class="glyphicon glyphicon-search"></span>
 				  </span>
 				</div>
@@ -69,82 +70,3 @@
 
   </div>
 </div>
-<script>
-	(function($,undefined){
-		var uid = (new Date()).getTime();
-		$('.dropdown input, .dropdown label').click(function(e) {
-			e.stopPropagation();
-		  });
-		$("#loadMovies").on("click", function(){
-			var fromPage = $("#fromPage").val();
-			var toPage = $("#toPage").val();
-			var year = $("#year").val();
-			
-			if(fromPage && toPage && year){
-				$.ajax({
-				  type: "POST",
-				  url: "reloadMovies.php",
-				  data: { fromPage: fromPage, toPage: toPage, year: year, cacheBuster: uid }
-				})
-				.done(function( msg ) {
-					console.log(msg);
-					//location.reload();
-				})
-				.fail(function(msg){
-					console.error("failed " + msg);	
-				});
-			}else{
-				alert("Please select valid from and to page");
-			}
-		});
-	    $("#filterMovies").on("click", function(){
-	      var years = $("#movieYearsFilter").val();
-	      var categories = $("#movieCategoriesFilter").val();
-	      var actors = $("#movieActorsFilter").val();
-	      var notFeatured = !$("#featuredOnly").is(':checked');
-	      if(years || categories || actors){
-	        $.ajax({
-	          type: "GET",
-	          url: "movies.php?filter=yes" + getIfNotNull("&years", years) + 
-	          		getIfNotNull("&categories", categories) + 
-	          		getIfNotNull("&actors", actors) + 
-	          		getIfNotNull("&notFeatured", notFeatured)
-	        })
-	        .done(function( data ) {
-	          $("#moviesContainer").html(data);
-	          $("#filterDropdown").dropdown('toggle')
-	        })
-	        .fail(function(msg){
-	          console.error("failed " + msg); 
-	        });
-	      }
-	    });
-	    var getIfNotNull = function (label, toGet){
-	      if(toGet){
-	        return label + "=" + toGet;
-	      }else{
-	        return "";
-	      }
-	    }
-
-	    $("#searchMovie").on("submit", function(){
-	      var searchText = $("#searchText").val();
-	      if(searchText){
-	        $.ajax({
-	          type: "GET",
-	          url: "movies.php?filter=yes" + getIfNotNull("&searchText", searchText)
-	          		+ getIfNotNull("&notFeatured", "1")
-	        })
-	        .done(function( data ) {
-	          $("#moviesContainer").html(data);
-	        })
-	        .fail(function(msg){
-	          console.error("failed " + msg); 
-	        });
-	      }
-	      return false;
-	    });
-
-	})(jQuery);
-
-</script>

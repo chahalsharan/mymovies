@@ -10,12 +10,14 @@
         $db = getMysqlConnection();
         $movie = Movie::loadFromDb($db, $movieId);
         $user = NULL;
-        $showAddToWatchList = TRUE;
+        $showAddToWatchList = FALSE;
         if(isset($_SESSION['userId'])){
             $user = User::loadFromDb($db, $_SESSION['userId']);
             $watching = $user->getWatchList($db);
             if(isset($watching[$movie->id])){
                 $showAddToWatchList = FALSE;
+            }else{
+                $showAddToWatchList = TRUE;
             }
         }
         closeMysqlConnection($db);
@@ -28,12 +30,12 @@
 <div class="modal-body" id="movieModalBody">
     <div class="container">        
         <div class="row row-margin-bottom">
-            <div class="col-md-7 lib-item" data-category="view">
+            <div class="col-md-7 lib-item" data-category="view" style="width:550px;">
                 <div class="lib-panel">
                     <div class="row box-shadow">
                         <div class="col-md-4" style="padding-left:0px; padding-right:0px">
                             <div class="lib-row lib-header">
-                                <img class="lib-img-show" src="<?php echo $movie->thumbnail ?>">
+                                <img class="lib-img-show" src="<?php echo $movie->thumbnail ?>" style="width:140px;height=175px;">
                                 <div class="lib-header-seperator"></div>
                             </div>
                             <div class="lib-row lib-desc">
@@ -78,6 +80,12 @@
                                 <?php } ?>
                                 <?php if($showAddToWatchList) { ?>
                                 <button class="btn btn-success addToWatchList" data-movieId="<?php echo $movie->id ?>"><span class="glyphicon glyphicon-plus"></span>Watchlist</button>
+                                <?php } else if(!isset($user)){ ?>
+                                <button class="btn btn-danger" disabled="disabled">Login to add to WatchList</button>    
+                                <?php } else { ?>
+                                <button class="btn btn-danger removeFromWatchList" style="margin-top:5px;" data-movieId="<?php echo $movie->id ?>">
+                                    <span class="glyphicon glyphicon-remove"></span> Remove from WatchList
+                                </button>
                                 <?php } ?>
                             </div>
                             <div class="lib-row lib-header">

@@ -25,9 +25,12 @@
 
 		foreach ($movies as $movie)  {
 			error_log("DEBUG: going to load watching linnk for movie:" . $movie->id);
-			loadMovieLinksSynopsisAndGeneralRating($db, $movie);
-			sleep(2);
+			$movie = loadMovieLinksSynopsisAndGeneralRating($db, $movie);
+            if(! isset($movie->watch)){
+                echo "Link found for movie " . $movie->name . " \n<br/>";
+            }
 		}
+        http_response_code(200);
 		closeMysqlConnection($db);
 	}
 	
@@ -86,15 +89,15 @@
 
 	function extractMovieLinksAndSynopsis($movie) {
 		$link = urldecode($movie->link);
-		error_log("DEBUG: going to load link page: " . $link);
+		error_log("DEBUG: LOAD_LINK: going to load link page: " . $link);
 		$linksRawData = loadHTML($link);
 		if (!isset($link)) {
-			error_log("timed out wile extracting movie link: " + $link);
+			error_log("ERROR: LOAD_LINK: timed out wile extracting movie link: " + $link);
 			return;
 		}
 		$html = str_get_html($linksRawData);
 		if (! isset($html)) {
-			rror_log("ERROR: can not parse links html for link: " + $link);
+			rror_log("ERROR: LOAD_LINK:  can not parse links html for link: " + $link);
 			return;
 		}
 
@@ -167,9 +170,15 @@
 
 	function loadMovieLinksSynopsisAndGeneralRating($db, $movie){
 		$movie = Movie::loadFromDb($db, $movie->id);
-		$movie = extractMovieLinksAndSynopsis($movie);
-		echo "<pre>";print_r($movie); echo "</pre>";
-		$movie->saveOrUpdate($db);
+        if(! isset($movie->watch)){
+		  $movie = extractMovieLinksAndSynopsis($movie);
+		  error_log("DEBUG: LOAD_LINK: Loaded movie watch link for " . $movie->id);
+		  $movie->saveOrUpdate($db);
+          sleep(1);
+        }else{
+            error_log("DEBUG: LOAD_LINK: Movie watch link laredy present for " . $movie->id);
+        }
+        return $movie;
 	}
 
 	function loadMovies($db, $fromPage, $toPage, $fromYear, $toYear) {
@@ -177,6 +186,8 @@
 		$startPage = $fromPage;
 		$endPage = $toPage;
 		echo $startPage. "-- " . $endPage;
+        $retryCount = 0;
+        $retryMax = 3;
 		while($startPage <= $endPage) {
 			
 			error_log("DEBUG: going to load for page:" . $startPage);
@@ -190,9 +201,15 @@
 				continue;
 			}
 			$html = str_get_html($rawHtml);
-			if (!isset($html)) {
-				error_log("TError parsing HTML for page: " . $startPage);
-				$startPage++;
+			if (!isset($html) || !$html) {
+				error_log("Error parsing HTML for page: " . $startPage);
+
+                if($retryCount >= $retryMax){
+				    $startPage++;
+                    $retryCount = 0;
+                }else{
+                    $retryCount ++;
+                }
 				continue;
 			}
 			
@@ -229,7 +246,7 @@
 							array_push($movie->categories, strip_tags($cat));							
 						}
 
-						$movie = extractMovieLinksAndSynopsis($movie);
+						//$movie = extractMovieLinksAndSynopsis($movie);
 						$movie->save($db);
 					}else {
 						error_log("DEBUG: movie exists:" . $movieTitle);
@@ -238,7 +255,7 @@
 					echo "<pre>Movie "; print_r($movie); echo "</pre>";
 				}
 			}
-			sleep(1);
+			sleep(2);
 			$startPage ++;
 		}
 	}

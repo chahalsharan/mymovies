@@ -76,6 +76,7 @@
         
         $movies = array();
         if ($searchText) {
+            error_log("DEBUG: here1");
             $params = array($searchText);
             $searchQuery = "SELECT m.id, m.name, m.year, l.link as link, m.rating, m.synopsis,  ". 
                                 "m.thumbnail, r.synopsis as rsynopsis, r.critics_score, r.audience_score " .
@@ -85,12 +86,16 @@
                         "WHERE match(m.name) AGAINST(?) ".
                         "GROUP BY m.id, m.name, m.year, l.link, m.rating, m.thumbnail ".
                         "ORDER BY m.year desc, r.critics_score desc, r.audience_score desc, m.rating desc, m.name asc";
+            error_log("DEBUG: searchQuery:" . $searchQuery);
+            error_log("DEBUG: searchQueryParams:" . $searchText);
             if(isset($limits)){
                 $searchQuery = $searchQuery . " LIMIT " . implode(",", $limits);
             }
             #echo "{" . $searchQuery . "}";
             $movies = $db->rawQuery($searchQuery, $params);
+            error_log("DEBUG: searchQuery result size:" . $db->count);
         }else{
+            error_log("DEBUG: here2");
             $movies = $db   ->groupBy('m.id, m.name, m.year, l.link, m.rating, m.thumbnail')
                             ->orderBy("m.year", "desc")
                             ->orderBy("COALESCE(r.critics_score, r.audience_score, m.rating)", "desc")
