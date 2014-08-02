@@ -1,4 +1,4 @@
-<?php require_once 'mysqlidb.php';?>
+<?php require_once 'mysqliDb.php';?>
 <?php require_once 'databaseConfig.php' ?>
 
 <?php	

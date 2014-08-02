@@ -1,7 +1,7 @@
 <?php
 
     function getMysqlConnection(){
-        return new Mysqlidb('localhost', 'mymovies', '', 'mymovies');
+        return new Mysqlidb('localhost', 'mymovies', 'letmewatchthis', 'mymovies');
     }
 
     function closeMysqlConnection($db){

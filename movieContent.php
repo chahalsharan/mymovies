@@ -1,4 +1,4 @@
-<?php require_once 'mysqlidb.php';?>
+<?php require_once 'mysqliDb.php';?>
 <?php require_once 'movieUtils.php' ?>
 <?php require_once 'Movie.php' ?>
 <?php require_once 'User.php' ?>

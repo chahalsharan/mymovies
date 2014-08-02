@@ -1,4 +1,4 @@
-<?php require_once 'mysqlidb.php';?>
+<?php require_once 'mysqliDb.php';?>
 <?php require_once 'User.php' ?>
 
 <?php
@@ -16,7 +16,11 @@
                     <tbody>
                         <?php 
                             $star = '<span class="glyphicon glyphicon-play-circle"></span>';
-                            foreach ($watching as $key => $value) { ?>
+                            foreach ($watching as $key => $value) { 
+                                if (strpos($key,'_featured') !== false) {
+				    continue;
+                                }
+			?>
                             <tr>
                                 <td class="detailsLink" data-movieId="<?php echo $key ?>">
                                     <a href="#!"><?php echo $value; ?></a>

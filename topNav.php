@@ -33,7 +33,7 @@
 			<li class="dropdown" <?php if(isset($_SESSION['userId'])) echo 'style="display: none;"'; ?> id="loginNavOptions">
 				<a href="#!" id="login" class="dropdown-toggle" data-toggle="dropdown">Login <b class="caret"></b></a>
 				<div class="dropdown-menu" style="padding: 10px; padding-bottom: 0px;" >
-					<?php include "loginform.php" ?>
+					<?php include "loginForm.php" ?>
 				</div>
 			</li>
 			<li class="dropdown">
