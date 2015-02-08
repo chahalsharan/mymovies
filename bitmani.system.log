@@ -1,0 +1,473 @@
+Xen Minimal OS!
+  start_info: 0xae2000(VA)
+    nr_pages: 0x26700
+  shared_inf: 0xbf22d000(MA)
+     pt_base: 0xae5000(VA)
+nr_pt_frames: 0x9
+    mfn_list: 0x9ae000(VA)
+   mod_start: 0x0(VA)
+     mod_len: 0
+       flags: 0x0
+    cmd_line: root=/dev/sda1 ro 4
+  stack:      0x96d840-0x98d840
+MM: Init
+      _text: 0x0(VA)
+     _etext: 0x7dc7d(VA)
+   _erodata: 0x9a000(VA)
+     _edata: 0x9fce0(VA)
+stack start: 0x96d840(VA)
+       _end: 0x9ade40(VA)
+  start_pfn: af1
+    max_pfn: 26700
+Mapping memory range 0xc00000 - 0x26700000
+setting 0x0-0x9a000 readonly
+skipped 0x1000
+MM: Initialise page allocator for c1f000(c1f000)-26700000(26700000)
+MM: done
+Demand map pfns at 26701000-2026701000.
+Heap resides at 2026702000-4026702000.
+Initialising timer interface
+Initialising console ... done.
+gnttab_table mapped at 0x26701000.
+Initialising scheduler
+Thread "Idle": pointer: 0x2026702050, stack: 0x26660000
+Thread "xenstore": pointer: 0x2026702800, stack: 0x26670000
+xenbus initialised on irq 1 mfn 0x80c24b
+Thread "shutdown": pointer: 0x2026702fb0, stack: 0x26680000
+Dummy main: start_info=0x98d940
+Thread "main": pointer: 0x2026703760, stack: 0x26690000
+"main" "root=/dev/sda1" "ro" "4" 
+vbd 2049 is hd0
+******************* BLKFRONT for device/vbd/2049 **********
+
+
+backend at /local/domain/0/backend/vbd/9239/2049
+Failed to read /local/domain/0/backend/vbd/9239/2049/feature-barrier.
+Failed to read /local/domain/0/backend/vbd/9239/2049/feature-flush-cache.
+20971520 sectors of 512 bytes
+**************************
+[H[J  Booting 'Ubuntu 14.04.1 LTS, kernel 3.13.0-43-generic'
+
+root  (hd0)
+ Filesystem type is ext2fs, using whole disk
+kernel  /boot/vmlinuz-3.13.0-43-generic root=LABEL=cloudimg-rootfs ro console=h
+vc0 
+initrd  /boot/initrd.img-3.13.0-43-generic
+
+============= Init TPM Front ================
+Tpmfront:Error Unable to read device/vtpm/0/backend-id during tpmfront initialization! error = ENOENT
+Tpmfront:Info Shutting down tpmfront
+close blk: backend=/local/domain/0/backend/vbd/9239/2049 node=device/vbd/2049
+[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Initializing cgroup subsys cpu
+[    0.000000] Initializing cgroup subsys cpuacct
+[    0.000000] Linux version 3.13.0-43-generic (buildd@tipua) (gcc version 4.8.2 (Ubuntu 4.8.2-19ubuntu1) ) #72-Ubuntu SMP Mon Dec 8 19:35:06 UTC 2014 (Ubuntu 3.13.0-43.72-generic 3.13.11.11)
+[    0.000000] Command line: root=LABEL=cloudimg-rootfs ro console=hvc0 
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   Centaur CentaurHauls
+[    0.000000] ACPI in unprivileged domain disabled
+[    0.000000] e820: BIOS-provided physical RAM map:
+[    0.000000] Xen: [mem 0x0000000000000000-0x000000000009ffff] usable
+[    0.000000] Xen: [mem 0x00000000000a0000-0x00000000000fffff] reserved
+[    0.000000] Xen: [mem 0x0000000000100000-0x0000000026efffff] usable
+[    0.000000] NX (Execute Disable) protection: active
+[    0.000000] DMI not present or invalid.
+[    0.000000] No AGP bridge found
+[    0.000000] e820: last_pfn = 0x26f00 max_arch_pfn = 0x400000000
+[    0.000000] Scanning 1 areas for low memory corruption
+[    0.000000] init_memory_mapping: [mem 0x00000000-0x000fffff]
+[    0.000000] init_memory_mapping: [mem 0x26400000-0x265fffff]
+[    0.000000] init_memory_mapping: [mem 0x24000000-0x263fffff]
+[    0.000000] init_memory_mapping: [mem 0x00100000-0x23ffffff]
+[    0.000000] init_memory_mapping: [mem 0x26600000-0x26efffff]
+[    0.000000] RAMDISK: [mem 0x02403000-0x0385bfff]
+[    0.000000] NUMA turned off
+[    0.000000] Faking a node at [mem 0x0000000000000000-0x0000000026efffff]
+[    0.000000] Initmem setup node 0 [mem 0x00000000-0x26efffff]
+[    0.000000]   NODE_DATA [mem 0x266fb000-0x266fffff]
+[    0.000000] Zone ranges:
+[    0.000000]   DMA      [mem 0x00001000-0x00ffffff]
+[    0.000000]   DMA32    [mem 0x01000000-0xffffffff]
+[    0.000000]   Normal   empty
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x00001000-0x0009ffff]
+[    0.000000]   node   0: [mem 0x00100000-0x26efffff]
+[    0.000000] SFI: Simple Firmware Interface v0.81 http://simplefirmware.org
+[    0.000000] smpboot: Allowing 1 CPUs, 0 hotplug CPUs
+[    0.000000] PM: Registered nosave memory: [mem 0x000a0000-0x000fffff]
+[    0.000000] e820: [mem 0x26f00000-0xffffffff] available for PCI devices
+[    0.000000] Booting paravirtualized kernel on Xen
+[    0.000000] Xen version: 3.4.3.amazon (preserve-AD)
+[    0.000000] setup_percpu: NR_CPUS:256 nr_cpumask_bits:256 nr_cpu_ids:1 nr_node_ids:1
+[    0.000000] PERCPU: Embedded 28 pages/cpu @ffff880026000000 s82304 r8192 d24192 u2097152
+[23384815.622253] Built 1 zonelists in Node order, mobility grouping on.  Total pages: 156878
+[23384815.622255] Policy zone: DMA32
+[23384815.622257] Kernel command line: root=LABEL=cloudimg-rootfs ro console=hvc0 
+[23384815.623654] PID hash table entries: 4096 (order: 3, 32768 bytes)
+[23384815.623696] Checking aperture...
+[23384815.631439] No AGP bridge found
+[23384815.634493] Memory: 579004K/637564K available (7383K kernel code, 1144K rwdata, 3408K rodata, 1336K init, 1444K bss, 58560K reserved)
+[23384815.634586] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[23384815.634608] Hierarchical RCU implementation.
+[23384815.634610] 	RCU dyntick-idle grace-period acceleration is enabled.
+[23384815.634611] 	RCU restricting CPUs from NR_CPUS=256 to nr_cpu_ids=1.
+[23384815.634612] 	Offload RCU callbacks from all CPUs
+[23384815.634614] 	Offload RCU callbacks from CPUs: 0.
+[23384815.634623] NR_IRQS:16640 nr_irqs:256 16
+[23384815.634758] Console: colour dummy device 80x25
+[23384815.634874] console [tty0] enabled
+[23384815.635010] console [hvc0] enabled
+[23384815.635497] allocated 2621440 bytes of page_cgroup
+[23384815.635505] please try 'cgroup_disable=memory' option if you don't want memory cgroups
+[23384815.635547] installing Xen timer for CPU 0
+[23384815.635587] tsc: Detected 2000.070 MHz processor
+[23384815.635596] Calibrating delay loop (skipped), value calculated using timer frequency.. 4000.14 BogoMIPS (lpj=8000280)
+[23384815.635605] pid_max: default: 32768 minimum: 301
+[23384815.635876] Security Framework initialized
+[23384815.635907] AppArmor: AppArmor initialized
+[23384815.635912] Yama: becoming mindful.
+[23384815.636170] Dentry cache hash table entries: 131072 (order: 8, 1048576 bytes)
+[23384815.636473] Inode-cache hash table entries: 65536 (order: 7, 524288 bytes)
+[23384815.636602] Mount-cache hash table entries: 2048 (order: 2, 16384 bytes)
+[23384815.636616] Mountpoint-cache hash table entries: 2048 (order: 2, 16384 bytes)
+[23384815.636898] Initializing cgroup subsys memory
+[23384815.636912] Initializing cgroup subsys devices
+[23384815.636918] Initializing cgroup subsys freezer
+[23384815.636923] Initializing cgroup subsys blkio
+[23384815.636928] Initializing cgroup subsys perf_event
+[23384815.636933] Initializing cgroup subsys hugetlb
+[23384815.637003] CPU: Physical Processor ID: 0
+[23384815.637009] CPU: Processor Core ID: 1
+[23384815.637017] Last level iTLB entries: 4KB 512, 2MB 7, 4MB 7
+[23384815.637017] Last level dTLB entries: 4KB 512, 2MB 32, 4MB 32
+[23384815.637017] tlb_flushall_shift: 6
+[23384815.819919] Freeing SMP alternatives memory: 32K (ffffffff81e6e000 - ffffffff81e76000)
+[23384815.821403] ftrace: allocating 28552 entries in 112 pages
+[23384815.836862] cpu 0 spinlock event irq 17
+[23384815.848906] Performance Events: unsupported p6 CPU model 44 no PMU driver, software events only.
+[23384815.850671] x86: Booted up 1 node, 1 CPUs
+[23384815.850746] NMI watchdog: disabled (cpu0): hardware events not enabled
+[23384815.850842] devtmpfs: initialized
+[23384815.853662] EVM: security.selinux
+[23384815.853669] EVM: security.SMACK64
+[23384815.853672] EVM: security.ima
+[23384815.853675] EVM: security.capability
+[23384815.854812] pinctrl core: initialized pinctrl subsystem
+[23384815.854848] xen:grant_table: Grant tables using version 1 layout
+[23384815.854864] Grant table initialized
+[23384815.854911] regulator-dummy: no parameters
+[23384815.874781] RTC time: 165:165:165, date: 165/165/65
+[23384815.874836] NET: Registered protocol family 16
+[23384815.875802] PCI: setting up Xen PCI frontend stub
+[23384815.876693] bio: create slab <bio-0> at 0
+[23384815.876852] ACPI: Interpreter disabled.
+[23384815.876866] xen:balloon: Initialising balloon driver
+[23384815.877623] xen_balloon: Initialising balloon driver
+[23384815.877803] vgaarb: loaded
+[23384815.877990] SCSI subsystem initialized
+[23384815.878079] usbcore: registered new interface driver usbfs
+[23384815.878095] usbcore: registered new interface driver hub
+[23384815.878121] usbcore: registered new device driver usb
+[23384815.878226] PCI: System does not support PCI
+[23384815.878233] PCI: System does not support PCI
+[23384815.878316] NetLabel: Initializing
+[23384815.878322] NetLabel:  domain hash size = 128
+[23384815.878326] NetLabel:  protocols = UNLABELED CIPSOv4
+[23384815.878342] NetLabel:  unlabeled traffic allowed by default
+[23384815.878420] Switched to clocksource xen
+[23384815.884045] AppArmor: AppArmor Filesystem Enabled
+[23384815.884065] pnp: PnP ACPI: disabled
+[23384815.885579] NET: Registered protocol family 2
+[23384815.885794] TCP established hash table entries: 8192 (order: 4, 65536 bytes)
+[23384815.885855] TCP bind hash table entries: 8192 (order: 5, 131072 bytes)
+[23384815.885883] TCP: Hash tables configured (established 8192 bind 8192)
+[23384815.885919] TCP: reno registered
+[23384815.885931] UDP hash table entries: 512 (order: 2, 16384 bytes)
+[23384815.885942] UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
+[23384815.886007] NET: Registered protocol family 1
+[23384815.886082] Trying to unpack rootfs image as initramfs...
+[23384815.911124] Freeing initrd memory: 20836K (ffff880002403000 - ffff88000385c000)
+[23384815.911285] platform rtc_cmos: registered platform RTC device (no PNP device found)
+[23384815.911369] microcode: CPU0 sig=0x206c2, pf=0x1, revision=0x10
+[23384815.911425] microcode: Microcode Update Driver: v2.00 <tigran@aivazian.fsnet.co.uk>, Peter Oruba
+[23384815.911432] Scanning for low memory corruption every 60 seconds
+[23384815.911723] Initialise system trusted keyring
+[23384815.911786] audit: initializing netlink socket (disabled)
+[23384815.911806] type=2000 audit(1423431554.277:1): initialized
+[23384815.941962] HugeTLB registered 2 MB page size, pre-allocated 0 pages
+[23384815.942977] zbud: loaded
+[23384815.943149] VFS: Disk quotas dquot_6.5.2
+[23384815.943207] Dquot-cache hash table entries: 512 (order 0, 4096 bytes)
+[23384815.943737] fuse init (API version 7.22)
+[23384815.943825] msgmni has been set to 1171
+[23384815.943889] Key type big_key registered
+[23384815.944159] Key type asymmetric registered
+[23384815.944165] Asymmetric key parser 'x509' registered
+[23384815.944204] Block layer SCSI generic (bsg) driver version 0.4 loaded (major 252)
+[23384815.944241] io scheduler noop registered
+[23384815.944246] io scheduler deadline registered (default)
+[23384815.944277] io scheduler cfq registered
+[23384815.944332] pci_hotplug: PCI Hot Plug PCI Core version: 0.5
+[23384816.019680] pciehp: PCI Express Hot Plug Controller Driver version: 0.4
+[23384816.019738] ipmi message handler version 39.2
+[23384816.020066] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+[23384816.021169] Linux agpgart interface v0.103
+[23384816.022465] brd: module loaded
+[23384816.023162] loop: module loaded
+[23384816.027533] libphy: Fixed MDIO Bus: probed
+[23384816.027638] tun: Universal TUN/TAP device driver, 1.6
+[23384816.027644] tun: (C) 1999-2004 Max Krasnyansky <maxk@qualcomm.com>
+[23384816.027698] PPP generic driver version 2.4.2
+[23384816.027737] xen_netfront: Initialising Xen virtual ethernet driver
+[23384816.029206] ehci_hcd: USB 2.0 'Enhanced' Host Controller (EHCI) Driver
+[23384816.029218] ehci-pci: EHCI PCI platform driver
+[23384816.029239] ehci-platform: EHCI generic platform driver
+[23384816.029265] ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
+[23384816.029274] ohci-pci: OHCI PCI platform driver
+[23384816.029290] ohci-platform: OHCI generic platform driver
+[23384816.029311] uhci_hcd: USB Universal Host Controller Interface driver
+[23384816.029379] i8042: PNP: No PS/2 controller found. Probing ports directly.
+[23384817.032960] i8042: No controller found
+[23384817.033191] mousedev: PS/2 mouse device common for all mice
+[23384817.092926] rtc_cmos rtc_cmos: rtc core: registered rtc_cmos as rtc0
+[23384817.093001] rtc_cmos: probe of rtc_cmos failed with error -38
+[23384817.093093] device-mapper: uevent: version 1.0.3
+[23384817.093179] device-mapper: ioctl: 4.27.0-ioctl (2013-10-30) initialised: dm-devel@redhat.com
+[23384817.093190] ledtrig-cpu: registered to indicate activity on CPUs
+[23384817.093316] TCP: cubic registered
+[23384817.093420] NET: Registered protocol family 10
+[23384817.093664] NET: Registered protocol family 17
+[23384817.093683] Key type dns_resolver registered
+[23384817.093807] Loading compiled-in X.509 certificates
+[23384817.095055] Loaded X.509 cert 'Magrathea: Glacier signing key: 55ab2fe28ed5c60df9587150d1734c920ea7b818'
+[23384817.095079] registered taskstats version 1
+[23384817.099225] Key type trusted registered
+[23384817.103050] Key type encrypted registered
+[23384817.106879] AppArmor: AppArmor sha1 policy hashing enabled
+[23384817.106889] IMA: No TPM chip found, activating TPM-bypass!
+[23384817.119524] blkfront: xvda1: barrier or flush: disabled; persistent grants: disabled; indirect descriptors: disabled;
+[23384817.206485] regulator-dummy: incomplete constraints, leaving on
+[23384817.206565]   Magic number: 1:252:3141
+[23384817.206620] /build/buildd/linux-3.13.0/drivers/rtc/hctosys.c: unable to open rtc device (rtc0)
+[23384817.206680] BIOS EDD facility v0.16 2004-Jun-25, 0 devices found
+[23384817.206687] EDD information not available.
+[23384817.207479] Freeing unused kernel memory: 1336K (ffffffff81d20000 - ffffffff81e6e000)
+[23384817.207488] Write protecting the kernel read-only data: 12288k
+[23384817.211404] Freeing unused kernel memory: 796K (ffff880001739000 - ffff880001800000)
+[23384817.211816] Freeing unused kernel memory: 688K (ffff880001b54000 - ffff880001c00000)
+Loading, please wait...
+[23384817.254770] systemd-udevd[94]: starting version 204
+Begin: Loading essential drivers ... done.
+Begin: Running /scripts/init-premount ... done.
+Begin: Mounting root file system ... Begin: Running /scripts/local-top ... done.
+Begin: Running /scripts/local-premount ... done.
+[23384818.700162] EXT4-fs (xvda1): mounted filesystem with ordered data mode. Opts: (null)
+Begin: Running /scripts/local-bottom ... done.
+done.
+Begin: Running /scripts/init-bottom ... done.
+[23384821.769553] random: nonblocking pool is initialized
+ * Starting Mount filesystems on boot[74G[ OK ]
+ * Starting Populate and link to /run filesystem[74G[ OK ]
+ * Stopping Populate and link to /run filesystem[74G[ OK ]
+[23384824.541029] EXT4-fs (xvda1): re-mounted. Opts: discard
+ * Starting Initialize or finalize resolvconf[74G[ OK ]
+ * Starting Signal sysvinit that the rootfs is mounted[74G[ OK ]
+ * Starting Clean /tmp directory[74G[ OK ]
+ * Stopping Track if upstart is running in a container[74G[ OK ]
+ * Stopping Clean /tmp directory[74G[ OK ]
+Cloud-init v. 0.7.5 running 'init-local' at Sun, 08 Feb 2015 21:39:25 +0000. Up 11.73 seconds.
+cloud-init-nonet[12.72]: waiting 10 seconds for network device
+ * Starting set console keymap[74G[ OK ]
+ * Starting Signal sysvinit that virtual filesystems are mounted[74G[ OK ]
+ * Starting Signal sysvinit that virtual filesystems are mounted[74G[ OK ]
+ * Starting Bridge udev events into upstart[74G[ OK ]
+ * Starting Signal sysvinit that remote filesystems are mounted[74G[ OK ]
+ * Stopping set console keymap[74G[ OK ]
+ * Starting device node and kernel event manager[74G[ OK ]
+ * Starting load modules from /etc/modules[74G[ OK ]
+ * Starting cold plug devices[74G[ OK ]
+ * Starting log initial device creation[74G[ OK ]
+ * Stopping load modules from /etc/modules[74G[ OK ]
+ * Starting Uncomplicated firewall[74G[ OK ]
+ * Starting configure network device security[74G[ OK ]
+ * Starting configure network device security[74G[ OK ]
+ * Starting Mount network filesystems[74G[ OK ]
+ * Stopping Mount network filesystems[74G[ OK ]
+ * Starting Bridge socket events into upstart[74G[ OK ]
+ * Stopping cold plug devices[74G[ OK ]
+ * Stopping log initial device creation[74G[ OK ]
+ * Starting configure network device[74G[ OK ]
+ * Starting Mount network filesystems[74G[ OK ]
+cloud-init-nonet[14.17]: static networking is now up
+ * Starting configure network device[74G[ OK ]
+ * Starting vsftpd daemon[74G[ OK ]
+ * Starting enable remaining boot-time encrypted block devices[74G[ OK ]
+ * Stopping Mount network filesystems[74G[ OK ]
+Cloud-init v. 0.7.5 running 'init' at Sun, 08 Feb 2015 21:39:28 +0000. Up 14.79 seconds.
+ci-info: +++++++++++++++++++++++++++Net device info+++++++++++++++++++++++++++
+ci-info: +--------+------+---------------+---------------+-------------------+
+ci-info: | Device |  Up  |    Address    |      Mask     |     Hw-Address    |
+ci-info: +--------+------+---------------+---------------+-------------------+
+ci-info: |   lo   | True |   127.0.0.1   |   255.0.0.0   |         .         |
+ci-info: |  eth0  | True | 172.31.21.172 | 255.255.240.0 | 06:b8:34:07:44:8c |
+ci-info: +--------+------+---------------+---------------+-------------------+
+ci-info: +++++++++++++++++++++++++++++++Route info++++++++++++++++++++++++++++++++
+ci-info: +-------+-------------+-------------+---------------+-----------+-------+
+ci-info: | Route | Destination |   Gateway   |    Genmask    | Interface | Flags |
+ci-info: +-------+-------------+-------------+---------------+-----------+-------+
+ci-info: |   0   |   0.0.0.0   | 172.31.16.1 |    0.0.0.0    |    eth0   |   UG  |
+ci-info: |   1   | 172.31.16.0 |   0.0.0.0   | 255.255.240.0 |    eth0   |   U   |
+ci-info: +-------+-------------+-------------+---------------+-----------+-------+
+Generating public/private rsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_rsa_key.
+Your public key has been saved in /etc/ssh/ssh_host_rsa_key.pub.
+The key fingerprint is:
+14:6b:23:ac:2e:e1:ff:3b:9e:71:02:1e:c7:b1:d9:99 root@ip-172-31-21-172
+The key's randomart image is:
++--[ RSA 2048]----+
+|        .        |
+|     .   o       |
+|      + =        |
+|     o O +       |
+|  . + = E        |
+| . + +           |
+|  o o o .        |
+|   o  .=         |
+|    .o=o         |
++-----------------+
+Generating public/private dsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_dsa_key.
+Your public key has been saved in /etc/ssh/ssh_host_dsa_key.pub.
+The key fingerprint is:
+6d:61:4a:20:27:91:39:25:50:87:53:6e:a9:46:13:b5 root@ip-172-31-21-172
+The key's randomart image is:
++--[ DSA 1024]----+
+|  .oBOB          |
+|    *O +         |
+|    ooE . o      |
+|   . + . + .     |
+|    o   S o      |
+|   .     .       |
+|                 |
+|                 |
+|                 |
++-----------------+
+Generating public/private ecdsa key pair.
+Your identification has been saved in /etc/ssh/ssh_host_ecdsa_key.
+Your public key has been saved in /etc/ssh/ssh_host_ecdsa_key.pub.
+The key fingerprint is:
+9f:eb:bc:e7:39:9c:64:71:10:b8:99:d8:ba:0d:1e:dc root@ip-172-31-21-172
+The key's randomart image is:
++--[ECDSA  256]---+
+|           ...   |
+|          . .    |
+|         o + .   |
+|        . = . .  |
+|       .So   o   |
+|        =.E.o    |
+|       . =o+ .   |
+|        o...=.   |
+|         .=+o.   |
++-----------------+
+ * Starting Signal sysvinit that local filesystems are mounted[74G[ OK ]
+ * Starting configure network device security[74G[ OK ]
+ * Stopping Mount filesystems on boot[74G[ OK ]
+ * Starting flush early job output to logs[74G[ OK ]
+ * Stopping Failsafe Boot Delay[74G[ OK ]
+ * Starting System V initialisation compatibility[74G[ OK ]
+ * Stopping flush early job output to logs[74G[ OK ]
+ * Starting configure virtual network devices[74G[ OK ]
+ * Starting Seed the pseudo random number generator on first boot[74G[ OK ]
+ * Stopping Seed the pseudo random number generator on first boot[74G[ OK ]
+ * Starting Bridge file events into upstart[74G[ OK ]
+ * Starting early crypto disks...       [80G 
+[74G[ OK ]
+ * Starting D-Bus system message bus[74G[ OK ]
+ * Starting system logging daemon[74G[ OK ]
+ * Starting SystemD login management service[74G[ OK ]
+ * Starting Handle applying cloud-config[74G[ OK ]
+Skipping profile in /etc/apparmor.d/disable: usr.sbin.rsyslogd
+ * Starting AppArmor profiles       [80G 
+[74G[ OK ]
+ * Setting up X socket directories...       [80G 
+[74G[ OK ]
+Cloud-init v. 0.7.5 running 'modules:config' at Sun, 08 Feb 2015 21:39:32 +0000. Up 17.88 seconds.
+ * Stopping System V initialisation compatibility[74G[ OK ]
+ * Starting System V runlevel compatibility[74G[ OK ]
+ * Starting deferred execution scheduler[74G[ OK ]
+ * Starting regular background program processing daemon[74G[ OK ]
+ * Starting save kernel messages[74G[ OK ]
+ * Starting ACPI daemon[74G[ OK ]
+ * Stopping CPU interrupts balancing daemon[74G[ OK ]
+ * Starting OpenSSH server[74G[ OK ]
+ * Starting automatic crash report generation[74G[ OK ]
+ * Stopping save kernel messages[74G[ OK ]
+open-vm-tools: not starting as this is not a VMware VM
+ * Restoring resolver state...       [80G 
+[74G[ OK ]
+resize2fs 1.42.9 (4-Feb-2014)
+The filesystem is already 2621440 blocks long.  Nothing to do!
+
+Generating locales...
+  en_US.UTF-8... up-to-date
+Generation complete.
+650000+0 records in
+650000+0 records out
+665600000 bytes (666 MB) copied, 25.9188 s, 25.7 MB/s
+Setting up swapspace version 1, size = 649996 KiB
+no label, UUID=b71d77ad-b361-4e24-b413-4be48b16a91d
+micro
+ * Stopping Handle applying cloud-config[74G[ OK ]
+[Sun Feb  8 21:40:04 UTC 2015] Regenerating keys for *
+/opt/bitnami/var/init/pre-start/070_regenerate_keys: 22: /opt/bitnami/var/init/pre-start/070_regenerate_keys: /opt/bitnami/apps/*/bnconfig: not found
+[Sun Feb  8 21:40:04 UTC 2015] Regenerating keys for * finished
+[Sun Feb  8 21:40:04 UTC 2015] Finished regenerating keys
+
+#########################################################################
+#                                                                       #
+#        Setting Bitnami application password to 'FfYwVfS01nx4'         #
+#                                                                       #
+#########################################################################
+
+150208 21:40:04 mysqld_safe Logging to '/opt/bitnami/mysql/data/mysqld.log'.
+150208 21:40:04 mysqld_safe Starting mysqld.bin daemon with databases from /opt/bitnami/mysql/data
+/opt/bitnami/mysql/scripts/ctl.sh : mysql  started at port 3306
+[Sun Feb  8 21:40:09 UTC 2015] Setting up password for mysql service
+150208 21:40:16 mysqld_safe mysqld from pid file /opt/bitnami/mysql/data/mysqld.pid ended
+[Sun Feb  8 21:40:29 UTC 2015] Setting up password for mysql service finished
+/opt/bitnami/mysql/scripts/ctl.sh : mysql  (pid 2319) already running
+[Sun Feb  8 21:40:29 UTC 2015] Setting up password for * application
+/opt/bitnami/var/init/pre-start/100_set_default_passwords: 55: /opt/bitnami/var/init/pre-start/100_set_default_passwords: /opt/bitnami/apps/*/bnconfig: not found
+[Sun Feb  8 21:40:29 UTC 2015] Setting up password for * application finished
+[Sun Feb  8 21:40:29 UTC 2015] Finished setting password
+/opt/bitnami/mysql/scripts/ctl.sh : mysql  (pid 2319) already running
+[08-Feb-2015 21:40:36] NOTICE: configuration file /opt/bitnami/php/etc/php-fpm.conf test is successful
+
+/opt/bitnami/php/scripts/ctl.sh : php-fpm started
+Syntax OK
+/opt/bitnami/apache2/scripts/ctl.sh : httpd started at port 80
+ * Stopping regular background program processing daemon[74G[ OK ]
+cron stop/waiting
+ * Starting regular background program processing daemon[74G[ OK ]
+cron start/running, process 2619
+ * Starting daemon monitor monit       [80G 
+[74G[ OK ]
+ * Stopping System V runlevel compatibility[74G[ OK ]
+Cloud-init v. 0.7.5 running 'modules:final' at Sun, 08 Feb 2015 21:40:46 +0000. Up 91.95 seconds.
+ci-info: +++++Authorized keys from /home/bitnami/.ssh/authorized_keys for user bitnami+++++
+ci-info: +---------+-------------------------------------------------+---------+----------+
+ci-info: | Keytype |                Fingerprint (md5)                | Options | Comment  |
+ci-info: +---------+-------------------------------------------------+---------+----------+
+ci-info: | ssh-rsa | 88:f4:d9:8d:22:f7:7e:ab:a8:52:f9:3c:bc:ae:34:f8 |    -    | mymovies |
+ci-info: +---------+-------------------------------------------------+---------+----------+
+ec2: 
+ec2: #############################################################
+ec2: -----BEGIN SSH HOST KEY FINGERPRINTS-----
+ec2: 1024 6d:61:4a:20:27:91:39:25:50:87:53:6e:a9:46:13:b5  root@ip-172-31-21-172 (DSA)
+ec2: 256 9f:eb:bc:e7:39:9c:64:71:10:b8:99:d8:ba:0d:1e:dc  root@ip-172-31-21-172 (ECDSA)
+ec2: 2048 14:6b:23:ac:2e:e1:ff:3b:9e:71:02:1e:c7:b1:d9:99  root@ip-172-31-21-172 (RSA)
+ec2: -----END SSH HOST KEY FINGERPRINTS-----
+ec2: #############################################################
